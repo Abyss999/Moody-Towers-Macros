@@ -129,5 +129,4 @@ Food 3: Hash Browns
 0          Scrambled Eggs      1 each       90      10     1    6     0  0.111 9.0
 1  Turkey Sausage Patties      2 each      130      14     2    8     0  0.108 9.2
 ...
-
-
+```
