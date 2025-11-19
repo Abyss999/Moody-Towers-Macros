@@ -35,7 +35,7 @@ class MoodyMenuScraper():
         for count, food in enumerate(foods):
             text_split = food.inner_text().split("\n")
             text = text_split[0] if len(text_split) > 0 else "N/A"
-            description = text_split[1] if len(text_split) > 1 else "N/A"
+            # description = text_split[1] if len(text_split) > 1 else "N/A"
             # scroll if needed 
             food.scroll_into_view_if_needed()
             # click the food 
@@ -50,6 +50,7 @@ class MoodyMenuScraper():
 
             serving_split = serving.inner_text().split(": ")
             nutritionMap["serving_size"] = serving_split[1] if len(serving_split) > 1 else "N/A"
+            # nutritionMap["description"] = description
 
             for i in range(len(nutrition) - 1):
                 key = nutrition[i].inner_text()
@@ -74,7 +75,6 @@ class MoodyMenuScraper():
 
             foodMaps.append({
                 "name": text,
-                "description": description,
                 "serving_size": serving_size,
                 "calories": int(calories) if calories.isnumeric() else 0,
                 "protein": int(protein) if protein.isnumeric() else 0,
@@ -83,6 +83,7 @@ class MoodyMenuScraper():
                 "sugar": int(sugar) if sugar.isnumeric() else 0,
                 "protein_per_calorie": self.handleSorting(int(protein) if protein.isnumeric() else 0, int(calories) if calories.isnumeric() else 0),
                 "calories_per_protein": self.handleSorting(int(calories) if calories.isnumeric() else 0, int(protein) if protein.isnumeric() else 0),
+                "description": description,
             })
 
         sortArr = sorted(foodMaps, key=lambda x: x["protein"], reverse=False)
@@ -91,7 +92,7 @@ class MoodyMenuScraper():
 
     def get_today_menu(self, find_date = today, menu_type = "lunch", refresh_cache = False):
         find_date = date.today().isoformat()
-        cached_file = f"macros_{menu_type}_cache.csv"
+        cached_file = f"menu/macros_{menu_type}_cache.csv"
 
         if os.path.exists(cached_file) and not refresh_cache: # file exist + check for refresh
             df = pd.read_csv(cached_file) # reads the cache csv
@@ -127,15 +128,15 @@ class MoodyMenuScraper():
         pd.set_option("display.max_rows", None)
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", None)
-        pd.set_option("display.max_colwidth", None)
+        # pd.set_option("display.max_colwidth", None)
         df = pd.DataFrame(data)
         print(df)
 
     @staticmethod
     def handleSorting(num, num2):
         if num2 == 0:
-            return 0
-        return num / num2
+            return round(0, 3)
+        return round(num / num2, 3)
     
     @staticmethod
     def handleNutritionMap(nutritionAmount):
@@ -147,6 +148,9 @@ class MoodyMenuScraper():
 
 __init__ = "__main__"
 if __name__ == "__main__":
-    menu = "dinner"
+    menu = "breakfast"
+    if menu not in ["lunch", "dinner", "breakfast"]:
+        print("Invalid menu type. Choose from 'lunch', 'dinner', or 'breakfast'.")
+        exit()
     scraper = MoodyMenuScraper(menu=menu)
     scraper.get_today_menu(menu_type=menu, refresh_cache=False)
