@@ -15,7 +15,6 @@ class MoodyMenuScraper():
             "Calories": "calories",
             "Sugar (g)": "sugar",
             "Serving Size": "serving_size",
-
         }
 
 
@@ -66,7 +65,7 @@ class MoodyMenuScraper():
             calories = nutritionMap.get("calories", "N/A")
             sugar = nutritionMap.get("sugar", "N/A")
             serving_size = nutritionMap.get("serving_size", "N/A")
-            description = nutritionMap.get("description", "N/A")
+            # description = nutritionMap.get("description", "N/A")
 
             print(f"Food {count + 1}: {text}")
 
@@ -83,7 +82,7 @@ class MoodyMenuScraper():
                 "sugar": int(sugar) if sugar.isnumeric() else 0,
                 "protein_per_calorie": self.handleSorting(int(protein) if protein.isnumeric() else 0, int(calories) if calories.isnumeric() else 0),
                 "calories_per_protein": self.handleSorting(int(calories) if calories.isnumeric() else 0, int(protein) if protein.isnumeric() else 0),
-                "description": description,
+                # "description": description,
             })
 
         sortArr = sorted(foodMaps, key=lambda x: x["protein"], reverse=False)
@@ -93,16 +92,19 @@ class MoodyMenuScraper():
     def get_today_menu(self, find_date = today, menu_type = "lunch", refresh_cache = False):
         find_date = date.today().isoformat()
         cached_file = f"menu/macros_{menu_type}_cache.csv"
+        if menu_type not in ["lunch", "dinner", "breakfast"]:
+            raise ValueError("Invalid menu type. Choose from 'lunch', 'dinner', or 'breakfast'.")
 
-        if os.path.exists(cached_file) and not refresh_cache: # file exist + check for refresh
-            df = pd.read_csv(cached_file) # reads the cache csv
-            df["date"] = df["date"].astype(str)
+        if os.path.exists(cached_file) and os.path.getsize(cached_file) > 0: # file exist + check for refresh
+            if not refresh_cache:
+                df = pd.read_csv(cached_file) # reads the cache csv
+                df["date"] = df["date"].astype(str)
 
-            rows = df[df["date"] == find_date] # finds today cache 
-            if not rows.empty: # if results 
-                data = rows.drop(columns=["date"]).to_dict(orient="records")
-                self.macro_results(data)
-                return data
+                rows = df[df["date"] == find_date] # finds today cache 
+                if not rows.empty: # if results 
+                    data = rows.drop(columns=["date"]).to_dict(orient="records")
+                    self.macro_results(data)
+                    return data
 
         print('Scraping...')
 
@@ -148,9 +150,5 @@ class MoodyMenuScraper():
 
 __init__ = "__main__"
 if __name__ == "__main__":
-    menu = "breakfast"
-    if menu not in ["lunch", "dinner", "breakfast"]:
-        print("Invalid menu type. Choose from 'lunch', 'dinner', or 'breakfast'.")
-        exit()
-    scraper = MoodyMenuScraper(menu=menu)
-    scraper.get_today_menu(menu_type=menu, refresh_cache=False)
+    menu = "dinner"
+    MoodyMenuScraper(menu=menu).get_today_menu(menu_type=menu, refresh_cache=False)
