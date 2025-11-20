@@ -3,10 +3,9 @@ today = date.today()
 
 # min-w-full = station tables 
 
-class UHMenuScraper():
-    def __init__(self, menu = "lunch"):
+class UHMenuScraper:
+    def __init__(self, menu="lunch"):
         self.menu = menu
-        self.search = ["all", "P", "V", "VG", "CF"] # all, protein, vegitarian, vegan, climate friendly
 
         self.diningHall = {
             "moody": "moody-towers-dining-commons",
@@ -22,12 +21,21 @@ class UHMenuScraper():
             "Serving Size": "serving_size",
         }
 
+        self.school = {
+            "UH": "uh",
+            "SFA": "sfa",
+            "tamu": "tamu",
+        }
 
-    def websiteScrape(self, playwright: Playwright, menu_type = "lunch", dining_hall = "moody"):
+        self.search = ["all", "P", "V", "VG", "CF"] # all, protein, vegitarian, vegan, climate friendly
+
+
+
+    def websiteScrape(self, playwright: Playwright, menu_type = "lunch", dining_hall = "moody", school = "UH"):
         chromium = playwright.chromium
         browser = chromium.launch(headless=False)
         page = browser.new_page()
-        page.goto(f"https://new.dineoncampus.com/uh/whats-on-the-menu/{self.diningHall[dining_hall]}/{today}/{menu_type}")
+        page.goto(f"https://new.dineoncampus.com/{self.school[school]}/whats-on-the-menu/{self.diningHall[dining_hall]}/{today}/{menu_type}")
         page.wait_for_selector(".min-w-full") # wait for each station to load 
 
         # foods  = page.query_selector_all(".text-lg.font-semibold.pl-2") # text-lg font-semibold pl-2
@@ -159,4 +167,9 @@ __init__ = "__main__"
 if __name__ == "__main__":
     menu = "lunch"  # breakfast, lunch, dinner
     dining_hall = "cougar" # moody, cougar
-    UHMenuScraper(menu=menu).get_today_menu(menu_type=menu, refresh_cache=False, dining_hall=dining_hall)
+    UHMenuScraper(menu=menu).get_today_menu(
+        menu_type=menu, 
+        refresh_cache=False, 
+        dining_hall=dining_hall,
+        school="UH"
+    )
