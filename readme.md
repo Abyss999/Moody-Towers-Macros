@@ -1,13 +1,13 @@
-### UH Dining Hall Scraper
+### Moody Towers Dining Scraper
 
-This project scrapes the daily **UH Dining Hall Commons** menu from the official DineOnCampus website and extracts full nutritional information for every food item.
+This project scrapes the daily **Moody Towers Dining Commons** menu from the official DineOnCampus website and extracts full nutritional information for every food item.
 The script automatically caches results into CSV files to avoid re-scraping unless needed.
 
 The scraper supports breakfast, lunch, and dinner menus and outputs a complete Pandas DataFrame of all foods and their macros.
 
 ### Features
 
-- Scrapes the live UH dining hall menus using Playwright
+- Scrapes the live Moody Towers menu using Playwright
 - Extracts:
 
   - Name
@@ -30,15 +30,12 @@ Saves results to:
 
 ### Project Structure
 ```
-UH-Dining-Webscraping/
+Moody-Webscraping/
 │
 ├── menu/
-│   ├── 27-4-cougar-woods-dining-commons_breakfast_cache.csv
-│   ├── 27-4-cougar-woods-dining-commons_breakfast_cache.csv
-│   └── 27-4-cougar-woods-dining-commons_breakfast_cache.csv
-│   └── moody-towers-dining-commons_breakfast_cache.csv
-│   └── moody-towers-dining-commons_lunch_cache.csv
-│   └── moody-towers-dining-commons_dinner_cache.csv
+│   ├── macros_breakfast_cache.csv
+│   ├── macros_lunch_cache.csv
+│   └── macros_dinner_cache.csv
 │
 ├── venv/                     # virtual environment (ignored)
 ├── imports.py               # shared imports for Playwright & Pandas
@@ -97,7 +94,7 @@ scraper.get_today_menu(menu_type="dinner", refresh_cache=True)
 
 How It Works (Code Summary)
 1. Scraping (websiteScrape)
-- Opens the UH dine on campus page for the given date & menu
+- Opens the Moody Towers page for the given date & menu
 - Clicks each food item
 - Extracts nutritional data from the popup modal
 - Computes two ratios:
